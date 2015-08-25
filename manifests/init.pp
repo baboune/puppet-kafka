@@ -82,6 +82,12 @@ class kafka (
     shell   => '/bin/bash',
     require => Group['kafka']
   }
+  
+  file { '/home/kafka':
+    ensure => 'directory',
+    owner  => 'kafka',
+    group  => 'kafka'
+  }
 
   file { $package_dir:
     ensure => 'directory',
