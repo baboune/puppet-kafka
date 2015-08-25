@@ -30,11 +30,15 @@ start() {
         start
       fi
     else
-        exec sudo KAFKA_JMX_OPTS="$KAFKA_JMX_OPTS" $DAEMON $DAEMON_OPTS >> /var/log/kafka/server.log 2>&1 &
+        su - kafka -c  "export KAFKA_JMX_OPTS=\"$KAFKA_JMX_OPTS\"; exec /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties >> /var/log/kafka/server.log 2>&1 & "
         sleep 2
         PID=`ps ax | grep -E '[k]afka.Kafka' | awk '{print $1}'`
-        echo $PID > $PID_FILE;
-        echo "\n$NAME started"
+        if [ ! -z $PID ]; then
+          echo $PID > $PID_FILE;
+          echo "\n$NAME started"
+        else
+          echo "\n$NAME failed to start. More information at /var/log/kafka/server.log."
+        fi
     fi
 }
 
